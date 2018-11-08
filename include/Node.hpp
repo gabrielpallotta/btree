@@ -44,9 +44,9 @@ class Node
         throw invalid_argument("Info already on tree");
       }
       if (!this->isFull()) {
-          this->infos.push_back(info);
-          sort(this->infos.begin(), this->infos.end());
-          return;
+        this->infos.push_back(info);
+        sort(this->infos.begin(), this->infos.end());
+        return;
       } else {
         for (int i = 0; i < this->n - 1; i++) {
           if (info == this->infos[i]) {
@@ -91,14 +91,22 @@ class Node
               this->nodes[i] = nullptr;
             }
           }
-          return;
+          break;
         } else if (this->infos[i] == info) {
             if (this->nodes[i] != nullptr) {
               this->infos.erase(this->infos.begin() + i);
               this->addInfo(this->nodes[i]->popBiggestInfo());
+              if (this->nodes[i]->isEmpty()) {
+                delete this->nodes[i];
+                this->nodes[i] = nullptr;
+              }
             } else if (this->nodes[i + 1] != nullptr) {
               this->infos.erase(this->infos.begin() + i);
               this->addInfo(this->nodes[i + 1]->popSmallestInfo());
+              if (this->nodes[i + 1]->isEmpty()) {
+                delete this->nodes[i + 1];
+                this->nodes[i + 1] = nullptr;
+              }
             } else {
               if (this->getNotNullChildDirection(i) == 1) {
                 T aux = this->infos[i + 1];
@@ -110,12 +118,13 @@ class Node
                 this->infos[i] = aux;
               }
             }
-          return;
+            
+          break;
         }
-//        if (this->nodes[j]->isEmpty()) {
-//          delete this->nodes[j];
-//          this->nodes[j] = nullptr;
-//        }
+        // if (this->nodes[j]->isEmpty()) {
+        //   delete this->nodes[j];
+        //   this->nodes[j] = nullptr;
+        // }
       }
     }
 
