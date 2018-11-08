@@ -2,6 +2,8 @@
 #define TREE_H
 
 #include <iostream>
+#include <stdexcept>
+
 #include "Node.hpp"
 
 using namespace std;
@@ -16,7 +18,7 @@ class Tree
       this->root = nullptr;
     };
 
-    void add(T info) throw (char*)
+    void add(T info)
     {
       if (this->root == nullptr) {
         this->root = new Node<T>(this->n);
@@ -26,10 +28,10 @@ class Tree
       return;
     };
 
-    void remove(T info) throw (char*)
+    void remove(T info)
     {
       if (this->root == nullptr) {
-        throw "Empty tree, can't remove";
+        throw invalid_argument("Info not on tree");
       }
 
       this->root->removeInfo(info);

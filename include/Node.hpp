@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <stdexcept>
 
 using namespace std;
 
@@ -37,8 +38,11 @@ class Node
       return true;
     }
 
-    void addInfo(T info) throw (char*)
+    void addInfo(T info)
     {
+      if(std::find(this->infos.begin(), this->infos.end(), info) != this->infos.end()) {
+        throw invalid_argument("Info already on tree");
+      }
       if (!this->isFull()) {
           this->infos.push_back(info);
           sort(this->infos.begin(), this->infos.end());
@@ -46,7 +50,7 @@ class Node
       } else {
         for (int i = 0; i < this->n - 1; i++) {
           if (info == this->infos[i]) {
-            throw "Duplicated info on tree";
+            throw invalid_argument("Info already on tree");
           }
           if (info < this->infos[i]) {
             if (this->nodes[i] == nullptr) {
@@ -64,12 +68,12 @@ class Node
       }
     };
 
-    void removeInfo(T info) throw (char*)
+    void removeInfo(T info)
     {
       if (this->isLeaf()) {
         typename vector<T>::iterator it = find(this->infos.begin(), this->infos.end(), info);
         if (it == this->infos.end()) {
-          throw "Info not on tree";
+          throw invalid_argument("Info not on tree");
         } else {
           this->infos.erase(it);
         }
@@ -79,7 +83,7 @@ class Node
       for (int i = 0; i < this->n; i++) {
         if (i == this->n - 1 || this->infos[i] > info) {
           if (this->nodes[i] == nullptr) {
-            throw "Info not on tree";
+            throw invalid_argument("Info not on tree");
           } else {
             this->nodes[i]->removeInfo(info);
             if (this->nodes[i]->isEmpty()) {
