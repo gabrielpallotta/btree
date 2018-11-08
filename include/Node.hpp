@@ -89,20 +89,29 @@ class Node
           }
           return;
         } else if (this->infos[i] == info) {
-            this->infos.erase(this->infos.begin() + i);
             if (this->nodes[i] != nullptr) {
+              this->infos.erase(this->infos.begin() + i);
               this->addInfo(this->nodes[i]->popBiggestInfo());
             } else if (this->nodes[i + 1] != nullptr) {
-              this->addInfo(this->nodes[j]->popSmallestInfo());
+              this->infos.erase(this->infos.begin() + i);
+              this->addInfo(this->nodes[i + 1]->popSmallestInfo());
             } else {
-              //deslocar
+              if (this->getNotNullChildDirection(i) == 1) {
+                T aux = this->infos[i + 1];
+                this->removeInfo(this->infos[i + 1]);
+                this->infos[i] = aux;
+              } else {
+                T aux = this->infos[i - 1];
+                this->removeInfo(this->infos[i - 1]);
+                this->infos[i] = aux;
+              }
             }
+          return;
         }
-        if (this->nodes[j]->isEmpty()) {
-          delete this->nodes[j];
-          this->nodes[j] = nullptr;
-        }
-        return;
+//        if (this->nodes[j]->isEmpty()) {
+//          delete this->nodes[j];
+//          this->nodes[j] = nullptr;
+//        }
       }
     }
 
@@ -138,6 +147,24 @@ class Node
         this->removeInfo(smallest);
         return smallest;
       }
+    }
+
+    // -1 -> left
+    //  0 -> none
+    //  1 -> right
+    int getNotNullChildDirection(int index)
+    {
+      if (this->isLeaf()) {
+        return 0;
+      }
+
+      for (int i = index + 1; i < this->n; i++) {
+        if (this->nodes[i] != nullptr) {
+          return 1;
+        }
+      }
+
+      return -1;
     }
 
     virtual ~Node()
